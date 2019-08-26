@@ -1,0 +1,201 @@
+<html>
+
+	<head>
+		<title>regist</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="../css/style.css" />
+        <script src="../image/js/jquery-3.3.1.min.js"></script>
+        <script src="../jquery.cookie.js"></script>
+
+        <script>
+            var flag=false;
+            var flag1=false;
+            var flag2=false;
+            var flag3=false;
+
+                function changCode() {
+                url='http://127.0.0.1:8000/loginapp/getcap/?'+new Date().getTime();
+                img=document.getElementById('num');
+                img.src=url;
+            }
+                function checkpwd2() {
+
+        pwd1=document.getElementsByName("userpwd1")[0];
+        pwd2=document.getElementsByName("userpwd2")[0];
+        image=document.getElementById('image2');
+        image.src="../image/loading.gif";
+        if(pwd1.value==pwd2.value){
+            image.src="../image/right_2.jpg"
+            flag1=true;
+        }
+        else {
+            image.src="../image/error_2.jpg";
+            flag1=false
+        }}
+    function checkpwd1() {
+
+        pwd1=document.getElementsByName("userpwd1")[0];
+        pwd2=document.getElementsByName("userpwd2")[0];
+        image=document.getElementById('image2');
+        image.src="../image/loading.gif";
+        if(pwd1.value==pwd2.value){
+            flag1=true
+            image.src="../image/right_2.jpg"
+        }else {
+            image.src="../image/error_2.jpg";
+            flag1=false
+        }}
+
+                image1=$("#image")
+        function checkName() {
+
+            image1=document.getElementById('image');
+            image.src="../image/loading.gif";
+            $.ajax({
+                type:"post",
+                url:"http://127.0.0.1:8000/loginapp/checkname/",
+                data:$("#fom1").serialize()+'&csrfmiddlewaretoken=' + $.cookie("csrftoken"),
+                success:function (msg) {
+                    if (msg==="ok"){
+                        flag3=true;
+                            image1.src="../image/right_2.jpg"
+                    }else if (msg==="error") {
+                            image1.src="../image/error_2.jpg";
+                        flag3=false
+                }
+            }
+            })
+        }
+
+        function checkCaptcha() {
+
+        image2=document.getElementById('image1');
+        image2.src="../image/loading.gif";
+        $.ajax({
+                type:"post",
+                url:"http://127.0.0.1:8000/loginapp/checkcaptcha/",
+                data:$("#fom1").serialize()+'&csrfmiddlewaretoken=' + $.cookie("csrftoken"),
+                success:function (msg) {
+                    if (msg==="ok"){
+                        console.log(msg)
+                        flag=true;
+                        image2.src="../image/right_2.jpg"
+                    }else if (msg==="error") {
+                        image2.src="../image/error_2.jpg";
+                        flag=false;
+                }
+            }})}
+
+
+
+            function regist() {
+                console.log(flag,flag1,flag3);
+               if (flag==true && flag1==true && flag3==true){
+                   $.ajax({
+                        type:"post",
+                        url:"http://127.0.0.1:8000/loginapp/registlogic/",
+                        data:$("#fom1").serialize()+'&csrfmiddlewaretoken=' + $.cookie("csrftoken"),
+                       success:function (msg) {
+                            if (msg==="ok"){
+                                location.href="http://127.0.0.1:8000/static/user/login.html"
+                            }
+
+                       }
+
+                   })
+
+               }else {
+                  alert("账号或密码错误")
+               }
+            }
+
+        </script>
+    </head>
+    <body>
+		<div id="wrap">
+			<div id="top_content">
+					<div id="header">
+						<div id="rightheader">
+							<p>
+								2009/11/20
+								<br />
+							</p>
+						</div>
+						<div id="topheader">
+							<h1 id="title">
+								<a href="#">main</a>
+							</h1>
+						</div>
+						<div id="navigation">
+						</div>
+					</div>
+				<div id="content">
+					<p id="whereami">
+					</p>
+					<h1>
+						注册
+					</h1>
+					<form action="" method="post" id="fom1">
+						<table cellpadding="0" cellspacing="0" border="0"
+							class="form_table">
+							<tr>
+								<td valign="middle" align="right">
+									用户名:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" name="username" onblur="checkName()" id="input_name">
+
+                                <img id="image" height='30px' ></td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									密码:
+								</td>
+								<td valign="middle" align="left">
+									<input type="password" class="inputgri" name="userpwd1" onblur="checkpwd1()">
+								</td>
+							</tr>
+                            <tr>
+								<td valign="middle" align="right">
+									确认密码:
+								</td>
+								<td valign="middle" align="left">
+									<input type="password" class="inputgri" name="userpwd2" onblur="checkpwd2()">
+                                    <img id="image2" height='30px' >
+								</td>
+							</tr>
+							<tr>
+                                    <td valign="middle" align="left">验证码:</td>
+								<td valign="middle" align="left">
+
+									<input type="text" class="inputgri"  onblur="checkCaptcha()" name="cap" id="captcha">
+                                    <img id="image1" height='30px' ></td>
+
+							</tr>
+                            <tr>
+                                <td></td>
+                                <td valign="middle" align="right">
+
+									<img src="http://127.0.0.1:8000/loginapp/getcap/" id="num" width="60px" >
+                                    <a href="javascript:void (0)" onclick="changCode()">换一张</a>
+								</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td valign="middle" align="center">
+                                    <input type="button" class="button" onclick="regist()" value="Submit &raquo;">
+                                </td>
+                            </tr>
+						</table>
+
+					</form>
+				</div>
+			</div>
+			<div id="footer">
+				<div id="footer_bg">
+				ABC@126.com
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
